@@ -58,6 +58,45 @@
                                 name="calendar_to"
                                 class="w-full bg-gray-70 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
                         </li>
+                        <li class="mr-3 flex-1">
+                            <br>
+                            <div>
+                                <label class="inline-flex items-center mt-3">
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Sunday</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="inline-flex items-center mt-3">
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Monday</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="inline-flex items-center mt-3">
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Tuesday</span>
+                                </label>
+
+                            </div>
+                            <div>
+                                <label class="inline-flex items-center mt-3">
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Wednesday</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="inline-flex items-center mt-3">
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Thursday</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="inline-flex items-center mt-3">
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Friday</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label class="inline-flex items-center mt-3">
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Saturday</span>
+                                </label>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>
