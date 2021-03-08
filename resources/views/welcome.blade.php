@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet"> <!--Totally optional :) -->
@@ -62,31 +62,31 @@
                             <br>
                             <div class="flex">
                                 <label class="inline-flex items-center mt-3 flex-1">
-                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Sunday</span>
+                                    <input type="checkbox" name="dayoftheweek" value="0" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Sunday</span>
                                 </label>
                                 <label class="inline-flex items-center mt-3 flex-1">
-                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Monday</span>
-                                </label>
-                            </div>
-                            <div class="flex">
-                                <label class="inline-flex items-center mt-3 flex-1">
-                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Tuesday</span>
-                                </label>
-                                <label class="inline-flex items-center mt-3 flex-1">
-                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Wednesday</span>
+                                    <input type="checkbox" name="dayoftheweek" value="1" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Monday</span>
                                 </label>
                             </div>
                             <div class="flex">
                                 <label class="inline-flex items-center mt-3 flex-1">
-                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Thursday</span>
+                                    <input type="checkbox" name="dayoftheweek" value="2" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Tuesday</span>
                                 </label>
                                 <label class="inline-flex items-center mt-3 flex-1">
-                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Friday</span>
+                                    <input type="checkbox" name="dayoftheweek" value="3" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Wednesday</span>
+                                </label>
+                            </div>
+                            <div class="flex">
+                                <label class="inline-flex items-center mt-3 flex-1">
+                                    <input type="checkbox" name="dayoftheweek" value="4" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Thursday</span>
+                                </label>
+                                <label class="inline-flex items-center mt-3 flex-1">
+                                    <input type="checkbox" name="dayoftheweek" value="5" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Friday</span>
                                 </label>
                             </div>
                             <div>
                                 <label class="inline-flex items-center mt-3">
-                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Saturday</span>
+                                    <input type="checkbox" name="dayoftheweek" value="6" class="form-checkbox h-5 w-5 text-orange-600" checked><span class="ml-2 text-white">Saturday</span>
                                 </label>
                             </div>
                         </li>
@@ -125,11 +125,24 @@
                                 <div class="flex-1 text-right md:text-center">
                                     {{-- <h5 class="font-bold uppercase text-gray-600">MMMM, YY: </h5> --}}
                                     <h3 class="font-bold text-3xl text-green-500">
-                                        <input type="month" id="start" name="start">
+                                        <input type="month" id="month_year" name="month_year">
                                     </h3>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="w-full p-6" id="main_calendar">
+                        {{-- <div class="flex">
+                            <div class="w-16 flex-initial">
+                                1
+                            </div>
+                            <div class="w-64 flex-initial">
+                                Sunday
+                            </div class="flex-initial">
+                            <div class="flex-initial">
+                                Event goes here
+                            </div>
+                        </div> --}}
                     </div>
                 </div> 
             </div>

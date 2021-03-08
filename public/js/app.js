@@ -10350,11 +10350,39 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
   \***********************************/
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 // Use map to filter out arrays based on day of the week
 var _require = __webpack_require__(/*! autoprefixer */ "./node_modules/autoprefixer/lib/autoprefixer.js"),
     data = _require.data;
 
 var daysoftheweek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+var month_year = document.getElementById('month_year');
+var calendar_element = document.getElementById('main_calendar');
+var set_event_button = document.getElementById('add_event');
+month_year.addEventListener('input', function () {
+  var month = month_year.value.substring(5, 7) - 1;
+  var year = month_year.value.substring(0, 4);
+  calendar_element.innerHTML = '';
+  var dataset = getMonthDataset(month, year);
+  var data = generateMonth(dataset);
+  console.log("Year is ".concat(year, " and month is ").concat(month));
+  console.log(dataset);
+  data.days.forEach(function (item, index) {
+    // console.log(item);
+    calendar_element.innerHTML += "\n        <div class=\"flex\">\n            <div class=\"w-16 flex-initial\">\n                ".concat(item, "\n            </div>\n            <div class=\"w-64 flex-initial\">\n                ").concat(data.daysoftheweek[index], "\n            </div class=\"flex-initial\">\n            <div class=\"flex-initial\">\n                Event goes here\n            </div>\n        </div>\n\n        ");
+  });
+});
 /**
  * @param {int} The month number, 0 based
  * @param {int} The year, not zero based, required to account for leap years
@@ -10391,6 +10419,74 @@ window.generateMonth = function (dataset) {
   };
   return mydataset;
 };
+
+window.setEvent = function () {
+  // First, let's get the FROM and TO dates, event, and checkboxes.
+  var calendar_from = new Date(document.getElementById('calendar_from').value);
+  var calendar_to = new Date(document.getElementById('calendar_to').value);
+  var myevent = document.getElementById('event_name').value; //Changed as this actually returns a node
+  // let daysoftheweek = document.querySelectorAll('input[name="dayoftheweek"]:checked');
+
+  var daysoftheweek = _toConsumableArray(document.querySelectorAll('input[name="dayoftheweek"]:checked')); //This is an array
+
+
+  var dofweek = daysoftheweek.map(function (x) {
+    return x.value;
+  }); //Base 0 days of the week value
+  // Then, let's catch some simple errors
+
+  if (calendar_to < calendar_from || !calendar_from || !calendar_to) {
+    alert("Invalid date inputs.");
+    return;
+  }
+
+  if (!daysoftheweek.length) {
+    alert('Please select any of the days of the week.');
+    return;
+  } // Let us get an array of dates between the two dates (from and to)
+
+
+  var mydates = getDates(calendar_from, calendar_to, dofweek);
+  console.log(mydates);
+  console.log(dofweek); // Send post request with Axios to save data
+
+  axios.post(window.location.origin + '/save', {
+    event: myevent,
+    dates: mydates
+  }).then(function (res) {
+    // Do some stuff after success
+    console.log(res);
+  })["catch"](function (err) {
+    // Do some stuff if error
+    alert("An error has occured: " + err);
+  });
+}; // Attach click event to function
+
+
+add_event.addEventListener('click', setEvent);
+/**
+ * @param {Date()} Start date
+ * @param {Date()} Stop date
+ * @param {Array} Array values of days of the week
+ * @return {Date[]} Returns a list of dates in between the date params
+ */
+
+function getDates(startdate, stopdate, daysoftheweek) {
+  var myarray = [];
+
+  for (var currentdate = startdate; currentdate <= stopdate; currentdate.setDate(currentdate.getDate() + 1)) {
+    var newdate = new Date(currentdate.getTime());
+
+    if (daysoftheweek.includes("".concat(newdate.getDay()))) {
+      console.log("test"); // Format for MySql datetime format
+
+      myarray.push(newdate.toISOString().slice(0, 19).replace('T', ' '));
+    }
+  } // console.log(myarray);
+
+
+  return myarray;
+}
 
 /***/ }),
 
