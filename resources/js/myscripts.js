@@ -114,7 +114,7 @@ window.setEvent = () => {
     console.log(dofweek);
 
     if (mydates.length == 0) {
-        showToast('Unable to place events. No applicable date was found.', 'bg-yellow-300');
+        showToast('Unable to place events. No applicable date to place event was found.', 'bg-yellow-300');
         return;
     }
 
@@ -172,6 +172,7 @@ window.generateColor = () => {
                     "50%,1)"
 }
 
+// Toast function
 window.showToast = function (message, class_backgroundcolor) {
     // Get the DIV
     var x = document.getElementById('toastedbread');

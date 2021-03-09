@@ -10468,7 +10468,7 @@ window.setEvent = function () {
   console.log(dofweek);
 
   if (mydates.length == 0) {
-    showToast('Unable to place events. No applicable date was found.', 'bg-yellow-300');
+    showToast('Unable to place events. No applicable date to place event was found.', 'bg-yellow-300');
     return;
   } // Send post request with Axios to save data
 
@@ -10519,7 +10519,8 @@ function getDates(startdate, stopdate, daysoftheweek) {
 
 window.generateColor = function () {
   return "hsla(" + ~~(360 * Math.random()) + "," + "70%," + "50%,1)";
-};
+}; // Toast function
+
 
 window.showToast = function (message, class_backgroundcolor) {
   // Get the DIV
