@@ -52,11 +52,11 @@ function generateMonth() {
         <div class="w-64 flex-initial">
         ${mydataset.daysoftheweek[index]}
         </div class="flex-initial">
+        <div class="flex flex-wrap events-container"></div>
         </div>
-        
         `;
     });
-    showToast("Added new event.", "bg-green-400");
+    
     renderEvents(month, year);
 }
 
@@ -70,7 +70,7 @@ let renderEvents = (month, year) => {
             let date = new Date(res.data[x].date)
             let element = document.getElementById('day'+(date.getDate()-1));
             let color = generateColor();
-            element.innerHTML += '<div class="flex-initial rounded-tl-xl rounded-br-xl p-1 m-1 text-white" style="background-color:' + color + '">' + res.data[x].event + '</div>';
+            element.querySelector('.events-container').innerHTML += '<div class="rounded-tl-xl rounded-br-xl p-1 m-1 text-white" style="background-color:' + color + '">' + res.data[x].event + '</div>';
         }
         console.log(res.data);
     })
@@ -111,7 +111,12 @@ window.setEvent = () => {
     let mydates = getDates(calendar_from, calendar_to, dofweek);
 
     console.log(mydates);
-    console.log(dofweek)
+    console.log(dofweek);
+
+    if (mydates.length == 0) {
+        showToast('Unable to place events. No applicable date was found.', 'bg-yellow-300');
+        return;
+    }
 
     // Send post request with Axios to save data
     axios.post(window.location.origin + '/save', {
@@ -124,10 +129,13 @@ window.setEvent = () => {
         
         // Programmatically invoke this event
         month_year.dispatchEvent(new Event('input'));
+        // Display success
+        showToast("Added new event.", "bg-green-400");
     })
     .catch(err => {
         // Do some stuff if error
-        alert("An error has occured: " + err);
+        // alert("An error has occured: " + err);
+        showToast("An error has occured: " + err + "\n Try lowering event characters.", "bg-red-600");
     });
 }
 

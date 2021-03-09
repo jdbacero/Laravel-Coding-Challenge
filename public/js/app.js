@@ -10411,9 +10411,8 @@ function generateMonth() {
   calendar_element.innerHTML = '';
   mydataset.days.forEach(function (item, index) {
     // console.log(item);
-    calendar_element.innerHTML += "\n        <div class=\"flex even:bg-gray-300 odd:bg-gray-100 p-4\" id=\"day".concat(index, "\">\n        <div class=\"w-16 flex-initial\">\n        ").concat(item, "\n        </div>\n        <div class=\"w-64 flex-initial\">\n        ").concat(mydataset.daysoftheweek[index], "\n        </div class=\"flex-initial\">\n        </div>\n        \n        ");
+    calendar_element.innerHTML += "\n        <div class=\"flex even:bg-gray-300 odd:bg-gray-100 p-4\" id=\"day".concat(index, "\">\n        <div class=\"w-16 flex-initial\">\n        ").concat(item, "\n        </div>\n        <div class=\"w-64 flex-initial\">\n        ").concat(mydataset.daysoftheweek[index], "\n        </div class=\"flex-initial\">\n        <div class=\"flex flex-wrap events-container\"></div>\n        </div>\n        ");
   });
-  showToast("Added new event.", "bg-green-400");
   renderEvents(month, year);
 }
 
@@ -10426,7 +10425,7 @@ var renderEvents = function renderEvents(month, year) {
       var date = new Date(res.data[x].date);
       var element = document.getElementById('day' + (date.getDate() - 1));
       var color = generateColor();
-      element.innerHTML += '<div class="flex-initial rounded-tl-xl rounded-br-xl p-1 m-1 text-white" style="background-color:' + color + '">' + res.data[x].event + '</div>';
+      element.querySelector('.events-container').innerHTML += '<div class="rounded-tl-xl rounded-br-xl p-1 m-1 text-white" style="background-color:' + color + '">' + res.data[x].event + '</div>';
     }
 
     console.log(res.data);
@@ -10466,7 +10465,13 @@ window.setEvent = function () {
 
   var mydates = getDates(calendar_from, calendar_to, dofweek);
   console.log(mydates);
-  console.log(dofweek); // Send post request with Axios to save data
+  console.log(dofweek);
+
+  if (mydates.length == 0) {
+    showToast('Unable to place events. No applicable date was found.', 'bg-yellow-300');
+    return;
+  } // Send post request with Axios to save data
+
 
   axios.post(window.location.origin + '/save', {
     event: myevent,
@@ -10475,10 +10480,13 @@ window.setEvent = function () {
     // Do some stuff after success
     console.log(res); // Programmatically invoke this event
 
-    month_year.dispatchEvent(new Event('input'));
+    month_year.dispatchEvent(new Event('input')); // Display success
+
+    showToast("Added new event.", "bg-green-400");
   })["catch"](function (err) {
     // Do some stuff if error
-    alert("An error has occured: " + err);
+    // alert("An error has occured: " + err);
+    showToast("An error has occured: " + err + "\n Try lowering event characters.", "bg-red-600");
   });
 }; // Attach click event to function
 
