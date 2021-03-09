@@ -10370,19 +10370,7 @@ var daysoftheweek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Fr
 var month_year = document.getElementById('month_year');
 var calendar_element = document.getElementById('main_calendar');
 var set_event_button = document.getElementById('add_event');
-month_year.addEventListener('input', function () {
-  var month = month_year.value.substring(5, 7) - 1;
-  var year = month_year.value.substring(0, 4);
-  calendar_element.innerHTML = '';
-  var dataset = getMonthDataset(month, year);
-  var data = generateMonth(dataset);
-  console.log("Year is ".concat(year, " and month is ").concat(month));
-  console.log(dataset);
-  data.days.forEach(function (item, index) {
-    // console.log(item);
-    calendar_element.innerHTML += "\n        <div class=\"flex\">\n            <div class=\"w-16 flex-initial\">\n                ".concat(item, "\n            </div>\n            <div class=\"w-64 flex-initial\">\n                ").concat(data.daysoftheweek[index], "\n            </div class=\"flex-initial\">\n            <div class=\"flex-initial\">\n                Event goes here\n            </div>\n        </div>\n\n        ");
-  });
-});
+month_year.addEventListener('input', generateMonth);
 /**
  * @param {int} The month number, 0 based
  * @param {int} The year, not zero based, required to account for leap years
@@ -10406,7 +10394,10 @@ window.getMonthDataset = function (month, year) {
  */
 
 
-window.generateMonth = function (dataset) {
+function generateMonth() {
+  var month = month_year.value.substring(5, 7) - 1;
+  var year = month_year.value.substring(0, 4);
+  var dataset = getMonthDataset(month, year);
   var days = dataset.map(function (data) {
     return data.getDate();
   });
@@ -10417,7 +10408,29 @@ window.generateMonth = function (dataset) {
     days: days,
     daysoftheweek: dofweek
   };
-  return mydataset;
+  calendar_element.innerHTML = '';
+  mydataset.days.forEach(function (item, index) {
+    // console.log(item);
+    calendar_element.innerHTML += "\n        <div class=\"flex even:bg-gray-300 odd:bg-gray-100 p-4\" id=\"day".concat(index, "\">\n        <div class=\"w-16 flex-initial\">\n        ").concat(item, "\n        </div>\n        <div class=\"w-64 flex-initial\">\n        ").concat(mydataset.daysoftheweek[index], "\n        </div class=\"flex-initial\">\n        </div>\n        \n        ");
+  });
+  showToast("Added new event.", "bg-green-400");
+  renderEvents(month, year);
+}
+
+var renderEvents = function renderEvents(month, year) {
+  axios.post(window.location.origin + '/events', {
+    month: month + 1,
+    year: year
+  }).then(function (res) {
+    for (var x = 0; x < res.data.length; x++) {
+      var date = new Date(res.data[x].date);
+      var element = document.getElementById('day' + (date.getDate() - 1));
+      var color = generateColor();
+      element.innerHTML += '<div class="flex-initial rounded-tl-xl rounded-br-xl p-1 m-1 text-white" style="background-color:' + color + '">' + res.data[x].event + '</div>';
+    }
+
+    console.log(res.data);
+  })["catch"](function (err) {});
 };
 
 window.setEvent = function () {
@@ -10435,13 +10448,18 @@ window.setEvent = function () {
   }); //Base 0 days of the week value
   // Then, let's catch some simple errors
 
-  if (calendar_to < calendar_from || !calendar_from || !calendar_to) {
-    alert("Invalid date inputs.");
+  if (!myevent) {
+    showToast('Please enter a name for the event.', 'bg-red-600');
+    return;
+  }
+
+  if (calendar_to < calendar_from || calendar_from == "Invalid Date" || calendar_to == "Invalid Date") {
+    showToast('Invalid date inputs.', 'bg-red-600');
     return;
   }
 
   if (!daysoftheweek.length) {
-    alert('Please select any of the days of the week.');
+    showToast('Please select any of the days of the week.', 'bg-red-600');
     return;
   } // Let us get an array of dates between the two dates (from and to)
 
@@ -10455,7 +10473,9 @@ window.setEvent = function () {
     dates: mydates
   }).then(function (res) {
     // Do some stuff after success
-    console.log(res);
+    console.log(res); // Programmatically invoke this event
+
+    month_year.dispatchEvent(new Event('input'));
   })["catch"](function (err) {
     // Do some stuff if error
     alert("An error has occured: " + err);
@@ -10486,7 +10506,24 @@ function getDates(startdate, stopdate, daysoftheweek) {
 
 
   return myarray;
-}
+} // Random pastel color generator 
+
+
+window.generateColor = function () {
+  return "hsla(" + ~~(360 * Math.random()) + "," + "70%," + "50%,1)";
+};
+
+window.showToast = function (message, class_backgroundcolor) {
+  // Get the DIV
+  var x = document.getElementById('toastedbread');
+  x.innerHTML = message; // Add the "show" class to DIV
+
+  x.className = "show " + class_backgroundcolor; // After 3 seconds, remove the show class from DIV
+
+  setTimeout(function () {
+    x.className = x.className.replace("show", "");
+  }, 3000);
+};
 
 /***/ }),
 

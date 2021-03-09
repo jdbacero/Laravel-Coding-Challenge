@@ -148,6 +148,8 @@
             </div>
         </div>
 
+        <div id="toastedbread"></div>
+        
         <script src="{{ asset('js/app.js') }}"></script>
     </body>
 </html>

@@ -6,34 +6,7 @@ var month_year = document.getElementById('month_year');
 var calendar_element = document.getElementById('main_calendar');
 var set_event_button = document.getElementById('add_event');
 
-month_year.addEventListener('input', () => {
-    let month = month_year.value.substring(5, 7) - 1;
-    let year = month_year.value.substring(0,4);
-    calendar_element.innerHTML = '';
-
-    let dataset = getMonthDataset(month, year);    
-    let data = generateMonth(dataset);
-    console.log(`Year is ${year} and month is ${month}`);
-    console.log(dataset);
-
-    data.days.forEach((item, index) => {
-        // console.log(item);
-        calendar_element.innerHTML += `
-        <div class="flex">
-            <div class="w-16 flex-initial">
-                ${item}
-            </div>
-            <div class="w-64 flex-initial">
-                ${data.daysoftheweek[index]}
-            </div class="flex-initial">
-            <div class="flex-initial">
-                Event goes here
-            </div>
-        </div>
-
-        `;
-    });
-});
+month_year.addEventListener('input', generateMonth);
 
 /**
  * @param {int} The month number, 0 based
@@ -55,7 +28,12 @@ window.getMonthDataset = (month, year) => {
  * @param {Date[]} Returned dataset from getMonthDataset()
  * @return {Array} Object with day and day of the week of a specific month
  */
-window.generateMonth = (dataset) => {
+function generateMonth() {
+    let month = month_year.value.substring(5, 7) - 1;
+    let year = month_year.value.substring(0,4);
+
+    let dataset = getMonthDataset(month, year);
+
     let days = dataset.map((data) => data.getDate());
     let dofweek = dataset.map((data) => daysoftheweek[data.getDay()]);
     let mydataset = {
@@ -63,7 +41,42 @@ window.generateMonth = (dataset) => {
         daysoftheweek: dofweek,
     };
     
-    return mydataset;
+    calendar_element.innerHTML = '';
+    mydataset.days.forEach((item, index) => {
+        // console.log(item);
+        calendar_element.innerHTML += `
+        <div class="flex even:bg-gray-300 odd:bg-gray-100 p-4" id="day${index}">
+        <div class="w-16 flex-initial">
+        ${item}
+        </div>
+        <div class="w-64 flex-initial">
+        ${mydataset.daysoftheweek[index]}
+        </div class="flex-initial">
+        </div>
+        
+        `;
+    });
+    showToast("Added new event.", "bg-green-400");
+    renderEvents(month, year);
+}
+
+let renderEvents = (month, year) => {
+    axios.post(window.location.origin + '/events', {
+        month: month+1,
+        year: year
+    })
+    .then(res => {
+        for (let x = 0; x < res.data.length; x++) {
+            let date = new Date(res.data[x].date)
+            let element = document.getElementById('day'+(date.getDate()-1));
+            let color = generateColor();
+            element.innerHTML += '<div class="flex-initial rounded-tl-xl rounded-br-xl p-1 m-1 text-white" style="background-color:' + color + '">' + res.data[x].event + '</div>';
+        }
+        console.log(res.data);
+    })
+    .catch(err => {
+
+    });
 }
 
 window.setEvent = () => {
@@ -79,12 +92,18 @@ window.setEvent = () => {
     let dofweek = daysoftheweek.map(x => x.value); //Base 0 days of the week value
 
     // Then, let's catch some simple errors
-    if ((calendar_to < calendar_from) || !calendar_from || !calendar_to) {
-        alert(`Invalid date inputs.`);
+    if(!myevent) {
+        showToast('Please enter a name for the event.', 'bg-red-600');
         return;
     }
+
+    if ((calendar_to < calendar_from) || calendar_from == "Invalid Date" || calendar_to == "Invalid Date") {
+        showToast('Invalid date inputs.', 'bg-red-600');
+        return;
+    }
+
     if (!daysoftheweek.length) {
-        alert('Please select any of the days of the week.');
+        showToast('Please select any of the days of the week.', 'bg-red-600');
         return;
     }
 
@@ -102,6 +121,9 @@ window.setEvent = () => {
     .then(res => {
         // Do some stuff after success
         console.log(res);
+        
+        // Programmatically invoke this event
+        month_year.dispatchEvent(new Event('input'));
     })
     .catch(err => {
         // Do some stuff if error
@@ -133,4 +155,22 @@ function getDates(startdate, stopdate, daysoftheweek) {
 
     // console.log(myarray);
     return myarray;
+}
+
+// Random pastel color generator 
+window.generateColor = () => { 
+    return "hsla(" + ~~(360 * Math.random()) + "," +
+                    "70%,"+
+                    "50%,1)"
+}
+
+window.showToast = function (message, class_backgroundcolor) {
+    // Get the DIV
+    var x = document.getElementById('toastedbread');
+    x.innerHTML = message;
+    // Add the "show" class to DIV
+    x.className = "show " + class_backgroundcolor;
+
+    // After 3 seconds, remove the show class from DIV
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
 }

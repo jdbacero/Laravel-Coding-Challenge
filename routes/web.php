@@ -18,3 +18,4 @@ Route::get('/', function () {
 });
 
 Route::post('/save', [EventsController::class, 'create']);
+Route::post('/events', [EventsController::class, 'getEventsMonth']);

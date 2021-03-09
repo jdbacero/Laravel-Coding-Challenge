@@ -26,4 +26,12 @@ class EventsController extends Controller
         }
         echo "success";
     }
+
+    public function getEventsMonth(Request $request)
+    {
+        $month = $request->month;
+        $year = $request->year;
+        $events = Event::whereYear('date', '=', $year)->whereMonth('date', '=', $month)->orderBy('date', 'asc')->get();
+        echo json_encode($events);
+    }
 }
