@@ -7,3 +7,7 @@ This was done as an application to a company I applied to in order to showcase b
 * Tailwind CSS
 * NPM
 * JS (Axios)
+
+---
+
+Configure .env and NPM and you're good to go!
